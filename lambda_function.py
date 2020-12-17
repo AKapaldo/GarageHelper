@@ -58,6 +58,67 @@ class OilIntentHandler(AbstractRequestHandler):
                 .response
         )
 
+class FilterIntentHandler(AbstractRequestHandler):
+    """Handler for Filter Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("Oil")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        slots = handler_input.request_envelope.request.intent.slots
+        vehicle = slots['Vehicle'].value
+        usefilter = oil.filtertype[vehicle]
+        speak_output = "For a {}, {}.".format(vehicle, usefilter)
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .response
+        )
+
+class WrenchIntentHandler(AbstractRequestHandler):
+    """Handler for Wrench Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("Wrench")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        slots = handler_input.request_envelope.request.intent.slots
+        vehicle = slots['Vehicle'].value
+        usewrench = oil.wrenchtype[vehicle]
+        speak_output = "For a {}, {}.".format(vehicle, usewrench)
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .response
+        )
+
+class ChangeIntentHandler(AbstractRequestHandler):
+    """Handler for Change Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("Change")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        slots = handler_input.request_envelope.request.intent.slots
+        vehicle = slots['Vehicle'].value
+        useoil = oil.oiltype[vehicle]
+        usefilter = oil.filtertype[vehicle]
+        usewrench = oil.wrenchtype[vehicle]
+        speak_output = "For a {}, {}. {} and {}.".format(vehicle, usewrench, useoil, usefilter)
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .response
+        )
 
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
@@ -163,6 +224,9 @@ sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(OilIntentHandler())
+sb.add_request_handler(FilterIntentHandler())
+sb.add_request_handler(WrenchIntentHandler())
+sb.add_request_handler(ChangeIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
